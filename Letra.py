@@ -16,7 +16,7 @@ class Letra:
             self.text_surface = pygame.font.Font(size=70).render(self.letra, True, "black", "white")
             self.text_rect = self.text_surface.get_rect(center=(self.pos_x+21.5, self.pos_y+27.5))
         elif len(self.letra) != 1:
-            self.text_surface = pygame.font.Font(size=40).render(self.letra, True, "black", pygame.Color("#73ff00"))
+            self.text_surface = pygame.font.Font(size=35).render(self.letra, True, "black")
             self.text_rect = self.text_surface.get_rect(center=(self.pos_x+50, self.pos_y+20))
         else:
             self.text_surface = pygame.font.Font(size=35).render(self.letra, True, "black")

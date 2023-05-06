@@ -56,7 +56,7 @@ class Interfaz:
         pygame.display.set_caption("Cajas de Software")
         input_frases = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(Interfaz.Ancho_pantalla/3, 200, 500, 60),
                                                             manager=Interfaz.Manager, object_id="#entrada_frases",
-                                                            placeholder_text="Admin ingrese las frases")
+                                                            placeholder_text="Admin ingrese una o varias frases")
         input_tiempo = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(Interfaz.Ancho_pantalla/3, 400, 500, 60),
                                                             manager=Interfaz.Manager, object_id="#entrada_tiempo",
                                                             placeholder_text="Admin ingrese el valor del tiempo (número entero) en minutos")
@@ -102,11 +102,11 @@ class Interfaz:
 
                     except FraseNoPermitida as error:
                         error_txt = Interfaz.Get_font(10).render(error.mensaje, True, "Red")
-
                     else:
-                        input_frases = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect(Interfaz.Ancho_pantalla/3, 200, 500, 60),
-                                                            manager=Interfaz.Manager, object_id="#entrada_frases",
-                                                            placeholder_text="Admin ingrese las frases")
+                        input_frases.set_text("")
+                        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1,pos=(400,100))) 
+                        time.sleep(0.1) 
+                        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONUP, button=1,pos=(400,100)))
                         error_txt = Interfaz.Get_font(10).render("Frase guardada exitosamente", True, "Green")
                     rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla/2, 300))
                     error_start_time = pygame.time.get_ticks()
@@ -153,7 +153,7 @@ class Interfaz:
             Interfaz.Pantalla.fill("white")
             menu_mouse_pos = pygame.mouse.get_pos()
 
-            Interfaz.Añadir_texto("Registro de Jugador / Equipo", 25, (Interfaz.Ancho_pantalla/2,100), pygame.Color("#000240"))
+            Interfaz.Añadir_texto("Registro de equipos", 25, (Interfaz.Ancho_pantalla/2,100), pygame.Color("#000240"))
 
             logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
                                 font=Interfaz.Get_font(20), base_color="#d7fcd4", hovering_color="White")
@@ -212,13 +212,6 @@ class Interfaz:
                         id_existentes.append(numero_jugador)
                         jugador[1] = numero_jugador
                         error_txt = Interfaz.Get_font(10).render("Número guardado", True, "Green")
-                        input_nombre = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((Interfaz.Ancho_pantalla/3, 200), (500, 60),),
-                                                            manager=Interfaz.Manager, object_id="#entrada_nombre",
-                                                            placeholder_text="Ingrese el nombre")
-        
-                        input_numero = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((Interfaz.Ancho_pantalla/3, 400), (500, 60)),
-                                                                            manager=Interfaz.Manager, object_id="#entrada_numero",
-                                                                            placeholder_text="Ingrese el número identificador  (máximo dos dígitos tipo entero)")
                     rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla/2, 360))
                     error_start_time = pygame.time.get_ticks()
                 
@@ -228,6 +221,11 @@ class Interfaz:
                     Jugador(jugador[0],jugador[1]).Registrar(Juego)
                     jugador[0], jugador[1] = None, None
                     error_txt = Interfaz.Get_font(20).render("Jugador Registrado", True, "Green")
+                    input_nombre.set_text("")
+                    input_numero.set_text("")
+                    pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1,pos=(400,100))) 
+                    time.sleep(0.1) 
+                    pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONUP, button=1,pos=(400,100)))
                     rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla / 2, 500))
                     error_start_time = pygame.time.get_ticks()
 
@@ -253,13 +251,16 @@ class Interfaz:
         for palabra in palabras_adivinadas:
             Interfaz.Añadir_texto("Palabras Acertadas", 20, (Interfaz.Ancho_pantalla/2+490,80), pygame.Color("#000240"))
             new_indicator = Letra(palabra, indicator_x, indicator_y)
-            new_indicator.color_fondo = "#73ff00"
+            new_indicator.color_fondo = "#6aaa64"
             new_indicator.dibujar(Interfaz.Pantalla)
             indicator_y += 70
         if flag == False:
             jugador = Juego.Jugadores[0] 
             Juego.Asignar_Frase_Objetivo()
+            Interfaz.Añadir_texto("Turno del jugador:", 20, (200,80), "#000240")
+            Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 15, (190,150), "#000240")
             flag=True
+        jugador = Juego.Jugadores[0]
         try:
             Juego.Asignar_Palabra_objetivo()
         except PalabrasAdivinadas as e:
@@ -437,7 +438,11 @@ class Interfaz:
         letra.color_fondo = color
         for indicator in indicators:
             if indicator == letra:
-                if indicator.color_fondo == "white" or "#d3d6da" :
+                if indicator.color_fondo == "white" or  indicator.color_fondo == "#d3d6da":
+                    indicator.color_fondo = color
+                elif color == "#6aaa64":
+                    indicator.color_fondo = color
+                elif color == "#c9b458" and indicator.color_fondo != "#6aaa64": 
                     indicator.color_fondo = color
                 indicator.dibujar(Interfaz.Pantalla)
         letra.color_texto = "white"
