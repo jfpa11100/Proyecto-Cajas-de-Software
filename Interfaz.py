@@ -1,3 +1,4 @@
+import gc
 import time
 from Button import Button
 from Jugador import Jugador
@@ -173,7 +174,7 @@ class Interfaz:
                     if jugar_btn.CheckForInput(menu_mouse_pos):
                         try:
                             if len(Juego.Get_Jugadores()) > 0:
-                                Interfaz.Jugar_screen(Juego)
+                                Juego.Siguiente_turno()
                             else:
                                 raise RequisitoFaltante("El juego no puede continuar sin jugadores registrados")
                         except RequisitoFaltante as error:
@@ -240,40 +241,45 @@ class Interfaz:
             Interfaz.Manager.draw_ui(Interfaz.Pantalla)
             pygame.display.update()
 
-    def Jugar_screen(Juego, palabra_adivinada=None, flag=False):
-        global guesses, current_letter_bg_x, guesses_count, current_guess_string, current_guess, palabras_adivinadas
+    def Jugar_screen(Juego, palabra_adivinada=None, flag=False, jugador=None):
+        global guesses, current_letter_bg_x, guesses_count, current_guess_string, current_guess, palabras_adivinadas, timer
         pygame.display.set_caption("Jugar")
         Interfaz.Pantalla.fill("white")
-        if palabra_adivinada != None:
-            palabras_adivinadas.append(palabra_adivinada)
-        indicator_x = (Interfaz.Ancho_pantalla/2)+420
-        indicator_y = 130
-        for palabra in palabras_adivinadas:
-            Interfaz.Añadir_texto("Palabras Acertadas", 20, (Interfaz.Ancho_pantalla/2+490,80), pygame.Color("#000240"))
-            new_indicator = Letra(palabra, indicator_x, indicator_y)
-            new_indicator.color_fondo = "#6aaa64"
-            new_indicator.dibujar(Interfaz.Pantalla)
-            indicator_y += 70
+
         if flag == False:
-            jugador = Juego.Jugadores[0] 
-            Juego.Asignar_Frase_Objetivo()
+            palabras_adivinadas = []
+            timer = pygame.time.get_ticks()
             flag=True
-        jugador = Juego.Jugadores[0]
         try:
             Juego.Asignar_Palabra_objetivo()
         except PalabrasAdivinadas as e:
             #Adivinó todas las palabras de la frase
             Interfaz.Añadir_texto(e.mensaje, 15, (Interfaz.Ancho_pantalla/2+40, 500), "green")
+            pygame.display.update()
             time.sleep(3)
-            Interfaz.Menu_screen(Juego)
+            Interfaz.Adivinar_frase_screen(Juego, jugador, Juego.Frase_objetivo.Frase)
+        if palabra_adivinada != None:
+            palabras_adivinadas.append(palabra_adivinada)
+        indicator_x = (Interfaz.Ancho_pantalla/2)+420
+        indicator_y = 120
+
+        for palabra in palabras_adivinadas:
+            Interfaz.Añadir_texto("Palabras Acertadas", 15, (Interfaz.Ancho_pantalla/2+470,90), pygame.Color("#000240"))
+            new_indicator = Letra(palabra, indicator_x, indicator_y)
+            new_indicator.color_fondo = "#6aaa64"
+            new_indicator.dibujar(Interfaz.Pantalla)
+            indicator_y += 55
 
         Interfaz.Añadir_texto("Turno de:", 20, (210,80), "#000240")
-        Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 15, (190,150), "#000240")
+        Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 10, (200,150), "#000240")
         Longitud_palabra = Juego.Longitud_Palabra_objetivo()
         guesses_count = 0
         guesses = [[]] * Juego.Get_Intentos_palabra()
         current_guess = []
         current_guess_string = ""
+
+        # show time
+        Interfaz.Añadir_texto("Tiempo restante", 17, (Interfaz.Ancho_pantalla/2+470, 20), "#000240")
 
         ALPHABET = ["QWERTYUIOP", "ASDFGHJKLÑ", "ZXCVBNM"]
         indicator_x = Interfaz.Ancho_pantalla/3
@@ -292,7 +298,13 @@ class Interfaz:
 
         indicator_y = 130
         for i in range(Juego.Get_Intentos_palabra()):
-            if Longitud_palabra == 3:
+            if Longitud_palabra == 1:
+                indicator_x = (Interfaz.Ancho_pantalla/3)+220
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+220
+            if Longitud_palabra == 2:
+                indicator_x = (Interfaz.Ancho_pantalla/3)+195
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+195
+            elif Longitud_palabra == 3:
                 indicator_x = (Interfaz.Ancho_pantalla/3)+165
                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+165
             elif Longitud_palabra == 4:
@@ -307,9 +319,28 @@ class Interfaz:
             elif Longitud_palabra == 7:
                 indicator_x = (Interfaz.Ancho_pantalla/3)+78
                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+78
+            elif Longitud_palabra == 8:
+                indicator_x = (Interfaz.Ancho_pantalla/3)+48
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+48
+            elif Longitud_palabra == 9:
+                indicator_x = (Interfaz.Ancho_pantalla/3)+18
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+18
+            elif Longitud_palabra == 10:
+                indicator_x = (Interfaz.Ancho_pantalla/3)-5
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-5
+            elif Longitud_palabra == 11:
+                indicator_x = (Interfaz.Ancho_pantalla/3)-30
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-30
+            elif Longitud_palabra == 12:
+                indicator_x = (Interfaz.Ancho_pantalla/3)-55
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-55
+            elif Longitud_palabra == 13:
+                indicator_x = (Interfaz.Ancho_pantalla/3)-75
+                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-75
             else:
                 indicator_x = (Interfaz.Ancho_pantalla/3)
                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)
+
             for letra in Juego.Palabra_objetivo.Palabra:
                 new_indicator = Letra('   ', indicator_x, indicator_y)
                 new_indicator.color_fondo = "#999999"
@@ -319,13 +350,6 @@ class Interfaz:
 
         error_txt = None
         while True:
-            # menu_mouse_pos = pygame.mouse.get_pos()
-            # terminar_btn = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 650), text_input="TERMINAR",
-            #                     font=Interfaz.Get_font(50), base_color="#d7fcd4", hovering_color="White")
-            # Interfaz.Pantalla.blit(background, background_rect)
-            # for button in [terminar_btn]:
-            #     button.Update(Interfaz.Pantalla)
-
             logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
                                 font=Interfaz.Get_font(20), base_color="#d7fcd4", hovering_color="White")
 
@@ -344,7 +368,11 @@ class Interfaz:
                             guesses_count += 1
                             current_guess = []
                             current_guess_string = ""
-                            if Juego.Longitud_Palabra_objetivo() == 3:
+                            if Juego.Longitud_Palabra_objetivo() == 1:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+220
+                            elif Juego.Longitud_Palabra_objetivo() == 2:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+195
+                            elif Juego.Longitud_Palabra_objetivo() == 3:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+165
                             elif Juego.Longitud_Palabra_objetivo() == 4:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+147
@@ -354,12 +382,27 @@ class Interfaz:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+100
                             elif Juego.Longitud_Palabra_objetivo() == 7:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+78
+                            elif Juego.Longitud_Palabra_objetivo() == 8:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+48
+                            elif Juego.Longitud_Palabra_objetivo() == 9:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+18
+                            elif Juego.Longitud_Palabra_objetivo() == 10:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-5
+                            elif Juego.Longitud_Palabra_objetivo() == 11:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-30
+                            elif Juego.Longitud_Palabra_objetivo() == 12:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-55
+                            elif Juego.Longitud_Palabra_objetivo() == 13:
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-75
                             else:
-                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)
+                                current_letter_bg_x = (Interfaz.Ancho_pantalla/3)-100
+
                             if guesses_count == Juego.Intentos_palabra:
-                                Interfaz.Añadir_texto("Has perdido", 40, (Interfaz.Ancho_pantalla/2+30, 500), "red")
+                                Interfaz.Añadir_texto("Has perdido", 40, (Interfaz.Ancho_pantalla/2+30, 500), "#FF0000")
+                                pygame.display.update()
                                 time.sleep(3)
-                                Interfaz.Menu_screen(Juego)
+                                Juego.Siguiente_turno()
+
                     elif event.key == pygame.K_BACKSPACE:
                         if len(current_guess_string) > 0:
                             Interfaz.__borrar_letra(guesses)
@@ -369,6 +412,132 @@ class Interfaz:
                             if len(current_guess_string) < Longitud_palabra:
                                 Interfaz.__Mostrar_letra(key_pressed)
 
+            # timer
+            current_timer = pygame.time.get_ticks()
+            if current_timer - timer > Juego.Tiempo_limite*60000:
+                Interfaz.Pantalla.fill("white")
+                Interfaz.Añadir_texto("Has perdido", 50, (Interfaz.Ancho_pantalla/2+30, 500), "#FF0000")
+                pygame.display.update()
+                time.sleep(3)
+                Interfaz.Menu_screen(Juego)
+            Interfaz.Añadir_texto(f"{(Juego.Tiempo_limite*60000-(current_timer - timer))/1000} sec", 15, (Interfaz.Ancho_pantalla/2+470, 50), "#000240", None, False)
+
+
+    
+    def Adivinar_frase_screen(Juego, jugador, palabrasAdivinadas):
+        pygame.display.set_caption("Adivinar frase")
+        Interfaz.Manager = pygame_gui.UIManager(Interfaz.Pantalla.get_size())
+        input_frase = pygame_gui.elements.UITextEntryLine(relative_rect=pygame.Rect((Interfaz.Ancho_pantalla/3, 250), (500, 60),),
+                                                            manager=Interfaz.Manager, object_id="#entrada_frase",
+                                                            placeholder_text="Ingresa la frase con las palabras encontradas")
+        intentos=0
+        error_txt = None
+        while True:
+            Interfaz.Pantalla.fill("white")
+            Interfaz.Añadir_texto(f"Intentos: {2-intentos}", 17, (Interfaz.Ancho_pantalla/2+500, 50), pygame.Color("#000240"))
+
+            Interfaz.Añadir_texto("Adivina la frase con las palabras", 25, (Interfaz.Ancho_pantalla/2,100), pygame.Color("#000240"))
+            indicator_x = (Interfaz.Ancho_pantalla/2)-300
+            indicator_y = 130
+            for palabra in palabrasAdivinadas:
+                new_indicator = Letra(palabra.Get_palabraStr(), indicator_x, indicator_y)
+                new_indicator.color_fondo = "#6aaa64"
+                new_indicator.dibujar(Interfaz.Pantalla, False)
+                indicator_x += 150
+            
+
+            logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
+                            font=Interfaz.Get_font(35), base_color="#000240", hovering_color="White")
+            
+            for button in [logo]:
+                button.Update(Interfaz.Pantalla)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame_gui.UI_TEXT_ENTRY_FINISHED and event.ui_object_id == "#entrada_frase":
+                    try:
+                        Juego.Verificar_frase(event.text)
+                    except:
+                        error_txt = Interfaz.Get_font(30).render("Has fallado", True, "Red")
+                        intentos += 1
+                        input_frase.set_text("")
+                        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1,pos=(500,600))) 
+                        time.sleep(0.1) 
+                        pygame.event.post(pygame.event.Event(pygame.MOUSEBUTTONUP, button=1,pos=(500,600)))
+                        if intentos == 2:
+                            Interfaz.Añadir_texto("Has perdido", 40, (Interfaz.Ancho_pantalla/2+30, 500), "#FF0000")
+                            pygame.display.update()
+                            time.sleep(3)
+                            Juego.Siguiente_turno()
+                    else:
+                        Interfaz.Añadir_texto("Has acertado!", 20, (Interfaz.Ancho_pantalla/2+50, 400), "#6aaa64")
+                        Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 20, (Interfaz.Ancho_pantalla/2+50, 500), pygame.Color("#000240"))
+                        jugador.Puntuacion += 1
+                        Interfaz.Añadir_texto(f"Ahora tu puntaje es {jugador.Puntuacion}", 20, (Interfaz.Ancho_pantalla/2+50, 600), "#6aaa64")
+                        pygame.display.update()
+                        time.sleep(3)
+
+                        # Seguir otro jugador adivinar palabras
+                        Juego.Frase_objetivo.Adivinada = True
+                        Juego.Siguiente_turno()
+
+                    rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla/2, 450))
+                    error_start_time = pygame.time.get_ticks()
+
+                Interfaz.Manager.process_events(event)
+            
+            if error_txt is not None:
+                Interfaz.Pantalla.blit(error_txt, rect_error)
+                time_since_error = pygame.time.get_ticks() - error_start_time
+                if time_since_error >= 2000:
+                    error_txt = None
+
+            UI_REFRESH_RATE = Interfaz.Clock.tick(60)/1000
+            Interfaz.Manager.update(UI_REFRESH_RATE)
+            Interfaz.Manager.draw_ui(Interfaz.Pantalla)
+            pygame.display.update()
+
+
+    def Resultados_screen(Juego):
+        pygame.display.set_caption("Resultados")
+        Interfaz.Pantalla.fill("white")
+        admin = Juego.Administrador
+        Interfaz.Añadir_texto("Resultados", 25, (Interfaz.Ancho_pantalla/2,90), pygame.Color("#000240"))
+        Interfaz.Añadir_texto("Jugador", 20, (Interfaz.Ancho_pantalla/2,180), pygame.Color("#000240"))
+        
+        indicator_y = 220
+        for jugador in Juego.Jugadores:
+            Interfaz.Añadir_texto(jugador.Nombre+" :"+" "*10+str(jugador.Puntuacion), 15, (Interfaz.Ancho_pantalla/2, indicator_y), pygame.Color("#000240"))
+            indicator_y += 30
+            Reiniciar = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 700), text_input="REINICIAR JUEGO",
+                                font=Interfaz.Get_font(30), base_color="#000240", hovering_color="White")
+
+            logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
+                                font=Interfaz.Get_font(20), base_color="#d7fcd4", hovering_color="White")
+
+            for button in [Reiniciar, logo]:
+                button.Update(Interfaz.Pantalla)
+        pygame.display.update()
+
+        while True:
+            menu_mouse_pos = pygame.mouse.get_pos()
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if Reiniciar.CheckForInput(menu_mouse_pos):
+                        gc.collect()
+                        admin.Iniciar_juego()
+
+
+            # pygame.display.update()
+
+
+
     def __Instrucciones_screen(Juego):
         pygame.display.set_caption("Instrucciones")
         while True:
@@ -377,14 +546,18 @@ class Interfaz:
 
             Interfaz.Añadir_texto("INSTRUCCIONES:", 35, (Interfaz.Ancho_pantalla / 2, 100), pygame.Color("#000240"))
             
-            Interfaz.Añadir_texto("1. Se deben definir los roles del juego (admin y jugadores).",
-                                     10, (Interfaz.Ancho_pantalla / 2, 170), "black")
-            Interfaz.Añadir_texto("2. El admin debe ingresar la estructura base del juego (frases y tiempo límite).",
-                                     10, (Interfaz.Ancho_pantalla / 2, 210), "black")
-            Interfaz.Añadir_texto("Tener en cuenta que las frases deben ser mínimo 4 y máximo 6 palabras. (conectores como 'en','lo','de' no cuentan como palabra pero son permitidas).",
-                                     8, (Interfaz.Ancho_pantalla / 2, 230), "black")
+            Interfaz.Añadir_texto("1. Se deben definir los roles del juego ( admin y jugadores ).",
+                                     12, (Interfaz.Ancho_pantalla / 2, 170), "black")
+
+            Interfaz.Añadir_texto("2. El admin debe ingresar la estructura base del juego ( frases y tiempo límite ).",
+                                     12, (Interfaz.Ancho_pantalla / 2, 210), "black")
+
+            Interfaz.Añadir_texto("Tener en cuenta que las frases deben ser mínimo 4 y máximo 6 palabras. (conectores COMO 'en', 'lo', 'de' no cuentan como palabra pero son permitidas).",
+                                     8, (Interfaz.Ancho_pantalla / 2, 235), "black")
+
             Interfaz.Añadir_texto("3. Los jugadores deben registrarse con nombre y número identificador.",
-                                     10, (Interfaz.Ancho_pantalla / 2, 270), "black")
+                                     12, (Interfaz.Ancho_pantalla / 2, 270), "black")
+
             Interfaz.Añadir_texto("Para que se guarden los datos, debes presionar 'ENTER' al terminar de llenar el campo.",
                                      12, (Interfaz.Ancho_pantalla / 2, 660), "red")
 
@@ -407,7 +580,7 @@ class Interfaz:
             pygame.display.update()
 
     def Get_font(size):
-        return pygame.font.Font("font.ttf", size)
+        return pygame.font.Font("Retro Team.otf", size+10)
 
     def __Mostrar_letra(tecla):
         global current_guess_string, current_letter_bg_x
@@ -447,7 +620,14 @@ class Interfaz:
         letra.color_texto = "white"
         letra.dibujar(Interfaz.Pantalla)
 
-    def Añadir_texto(texto="", tamaño:int=0, posicion:tuple=(0,0), colorLetra="black", colorFondo=None):
+    def Añadir_texto(texto="", tamaño:int=0, posicion:tuple=(0,0), colorLetra="black", colorFondo=None, punto=True):
+        if "." in texto and punto == False:
+            texto = texto.split(".")
+            unit = texto[1].split(" ")
+            texto = texto[0] + " "+unit[1]
+            blanquear = Interfaz.Get_font(tamaño).render("      ", True, "white", "white")
+            rect_blanq = blanquear.get_rect(center=posicion)
+            Interfaz.Pantalla.blit(blanquear, rect_blanq)
         textoAñadir = Interfaz.Get_font(tamaño).render(texto, True, colorLetra, colorFondo)
         rect_texto = textoAñadir.get_rect(center=posicion)
         Interfaz.Pantalla.blit(textoAñadir, rect_texto)

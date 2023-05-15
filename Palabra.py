@@ -36,3 +36,17 @@ class Palabra:
                 pal1 += self.Palabra[i].letra
                 pal2 += __o[i].letra
             return True if pal1 == pal2 else False 
+
+    def __ne__(self, __o: object) -> bool:
+        if isinstance(__o, Palabra):
+            pal1 , pal2 = "", ""
+            for i in range(len(self.Palabra)):
+                pal1 += self.Palabra[i].letra
+                pal2 += __o[i].letra
+
+            return False if pal1 == pal2 else True 
+        else:
+            pal1= ""
+            for i in range(len(self.Palabra)):
+                pal1 += self.Palabra[i].letra
+            return False if pal1 == __o else True 

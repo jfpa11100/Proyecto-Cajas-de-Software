@@ -9,7 +9,8 @@
             "name": "Python: archivo actual",
             "type": "python",
             "request": "launch",
-            "program": "C:/Users/Administrador/OneDrive/Documentos/U/Tercer Semestre/Ingeniería de Requisitos/Proyecto Cajas de Sotware/Cajas de Software/Main.py",
+            "program": "${file}",
+            // "program": "C:/Users/Administrador/OneDrive/Documentos/U/Tercer Semestre/Ingeniería de Requisitos/Proyecto Cajas de Sotware/Cajas de Software/Main.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }

@@ -2,13 +2,14 @@ class Jugador:
     def __init__(self, nombre, numero) -> None:
         self.Nombre = nombre
         self.Numero = numero
-        self.Puntuacion = None
+        self.Puntuacion = 0
+        self.Participo = False
 
     def Registrar(self, Juego):
         Juego.Guardar_Jugador(self)
 
     def Adivinar(self, intento, Juego):
-        Juego.Verificar_intento(intento)
+        Juego.Verificar_intento(intento, self)
 
     def __repr__(self) -> str:
         return repr(f"Jugador {self.Nombre}, num: {self.Numero}")

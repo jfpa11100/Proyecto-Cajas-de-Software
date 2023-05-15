@@ -5,7 +5,7 @@ class Administrador:
         self.Iniciar_juego()
 
     def Iniciar_juego(self):
-        juego = Juego(self)
+        Juego(self)
 
     def Asignar_Frases(self, Juego, frase = ""):
         Juego.Guardar_frase(frase)

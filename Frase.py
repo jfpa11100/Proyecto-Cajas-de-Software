@@ -17,6 +17,26 @@ class Frase:
     def Set_Adivinada(self, value):
         self.Adivinada = value
 
+    def __eq__(self, __o ) -> bool:
+        if isinstance(__o, Frase):
+            if len(self) != len(__o):
+                return False
+            for i in range(len(self.Frase)):
+                if len(self.Frase[i]) != len(__o.Frase[i]):
+                    return False
+                elif self.Frase[i] != __o.Frase[i]:
+                    return False
+            return True
+        else:
+            __o = __o.upper()
+            __o = __o.split(" ")
+            for i in range(len(self.Frase)):
+                if len(self.Frase[i]) != len(__o[i]):
+                    return False
+                elif self.Frase[i] != __o[i]:
+                    return False
+            return True
+
     def __repr__(self) -> str:
         frase = ""
         for i in self.Frase:

@@ -59,7 +59,12 @@ class Juego:
         self.Tiempo_limite = int(tiempo)
 
     def Asignar_Frase_Objetivo(self):
-        self.Frase_objetivo = random.choice(self.Frases)
+        frases = [i for i in self.Frases if i.Adivinada == False]
+        if len(frases) > 0:
+            self.Frase_objetivo = random.choice(self.Frases)
+            return True
+        else:
+            return False
 
     def Asignar_Palabra_objetivo(self):
         frases = [i for i in self.Frase_objetivo.Frase if i.Adivinada == False]
@@ -77,7 +82,7 @@ class Juego:
                 return True
         return False
 
-    def Verificar_intento(self, intento):
+    def Verificar_intento(self, intento, jugador):
         if self.Palabra_objetivo == intento:
             for i in range (len(intento)):
                 Interfaz.Pintar_letra(intento[i], "#6aaa64")
@@ -88,9 +93,9 @@ class Juego:
                     todas = False
             if todas != True:
                 time.sleep(3)
-                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), flag=True)
+                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), True, jugador)
             else:
-                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), flag=True)
+                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), True, jugador)
         else:
             target = copy.deepcopy(self.Palabra_objetivo)
             for l in range(len(self.Palabra_objetivo)):
@@ -107,6 +112,23 @@ class Juego:
                 else:
                     if intento[k].color_fondo == "white":
                         Interfaz.Pintar_letra(intento[k], "#787c7e")
+
+    def Verificar_frase(self, frase):
+        if self.Frase_objetivo == frase:
+            self.Frase_objetivo.Adivinada = True
+            return
+        else:
+            raise
+
+    def Siguiente_turno(self):
+        jugadores = [i for i in self.Jugadores if i.Participo == False]
+        if len(jugadores) > 0 and self.Asignar_Frase_Objetivo():
+            jugador = random.choice(jugadores)
+            jugador.Participo = True
+            Interfaz.Jugar_screen(self, None, False, jugador)
+        else:
+            Interfaz.Resultados_screen(self)
+
 
     def Get_Frases(self):
         return self.Frases
