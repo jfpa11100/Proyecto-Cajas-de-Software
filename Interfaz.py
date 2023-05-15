@@ -257,8 +257,6 @@ class Interfaz:
         if flag == False:
             jugador = Juego.Jugadores[0] 
             Juego.Asignar_Frase_Objetivo()
-            Interfaz.Añadir_texto("Turno del jugador:", 20, (200,80), "#000240")
-            Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 15, (190,150), "#000240")
             flag=True
         jugador = Juego.Jugadores[0]
         try:
@@ -269,7 +267,7 @@ class Interfaz:
             time.sleep(3)
             Interfaz.Menu_screen(Juego)
 
-        Interfaz.Añadir_texto("Turno del jugador:", 20, (200,80), "#000240")
+        Interfaz.Añadir_texto("Turno de:", 20, (210,80), "#000240")
         Interfaz.Añadir_texto(f"Jugador {jugador.Nombre}, num: {jugador.Numero}", 15, (190,150), "#000240")
         Longitud_palabra = Juego.Longitud_Palabra_objetivo()
         guesses_count = 0
@@ -319,6 +317,7 @@ class Interfaz:
                 indicator_x += 50
             indicator_y += 70
 
+        error_txt = None
         while True:
             # menu_mouse_pos = pygame.mouse.get_pos()
             # terminar_btn = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 650), text_input="TERMINAR",
@@ -357,7 +356,7 @@ class Interfaz:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)+78
                             else:
                                 current_letter_bg_x = (Interfaz.Ancho_pantalla/3)
-                            if guesses_count == Juego.Get_Intentos_palabra():
+                            if guesses_count == Juego.Intentos_palabra:
                                 Interfaz.Añadir_texto("Has perdido", 40, (Interfaz.Ancho_pantalla/2+30, 500), "red")
                                 time.sleep(3)
                                 Interfaz.Menu_screen(Juego)
@@ -452,4 +451,3 @@ class Interfaz:
         textoAñadir = Interfaz.Get_font(tamaño).render(texto, True, colorLetra, colorFondo)
         rect_texto = textoAñadir.get_rect(center=posicion)
         Interfaz.Pantalla.blit(textoAñadir, rect_texto)
-        pygame.display.update
