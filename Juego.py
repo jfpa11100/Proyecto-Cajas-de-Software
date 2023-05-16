@@ -62,6 +62,7 @@ class Juego:
         frases = [i for i in self.Frases if i.Adivinada == False]
         if len(frases) > 0:
             self.Frase_objetivo = random.choice(self.Frases)
+            self.Frase_objetivo.Adivinada = True
             return True
         else:
             return False
@@ -115,17 +116,25 @@ class Juego:
 
     def Verificar_frase(self, frase):
         if self.Frase_objetivo == frase:
-            self.Frase_objetivo.Adivinada = True
             return
         else:
             raise
 
-    def Siguiente_turno(self):
+    def Siguiente_turno(self, flag=True):
         jugadores = [i for i in self.Jugadores if i.Participo == False]
-        if len(jugadores) > 0 and self.Asignar_Frase_Objetivo():
-            jugador = random.choice(jugadores)
-            jugador.Participo = True
-            Interfaz.Jugar_screen(self, None, False, jugador)
+        if self.Asignar_Frase_Objetivo():
+            if len(jugadores) > 0:
+                jugador = random.choice(jugadores)
+                jugador.Participo = True
+                Interfaz.Jugar_screen(self, None, False, jugador)
+            else:
+                for i in self.Jugadores:
+                    i.Participo = False
+                jugadores = [i for i in self.Jugadores if i.Participo == False]
+                jugador = random.choice(jugadores)
+                jugador.Participo = True
+                Interfaz.Jugar_screen(self, None, False, jugador)
+                
         else:
             Interfaz.Resultados_screen(self)
 

@@ -246,10 +246,14 @@ class Interfaz:
         pygame.display.set_caption("Jugar")
         Interfaz.Pantalla.fill("white")
 
+        if palabra_adivinada != None:
+            palabras_adivinadas.append(palabra_adivinada)
+
         if flag == False:
             palabras_adivinadas = []
             timer = pygame.time.get_ticks()
             flag=True
+
         try:
             Juego.Asignar_Palabra_objetivo()
         except PalabrasAdivinadas as e:
@@ -257,12 +261,10 @@ class Interfaz:
             Interfaz.Añadir_texto(e.mensaje, 15, (Interfaz.Ancho_pantalla/2+40, 500), "green")
             pygame.display.update()
             time.sleep(3)
-            Interfaz.Adivinar_frase_screen(Juego, jugador, Juego.Frase_objetivo.Frase)
-        if palabra_adivinada != None:
-            palabras_adivinadas.append(palabra_adivinada)
+            Interfaz.Adivinar_frase_screen(Juego, jugador, palabras_adivinadas)
+
         indicator_x = (Interfaz.Ancho_pantalla/2)+420
         indicator_y = 120
-
         for palabra in palabras_adivinadas:
             Interfaz.Añadir_texto("Palabras Acertadas", 15, (Interfaz.Ancho_pantalla/2+470,90), pygame.Color("#000240"))
             new_indicator = Letra(palabra, indicator_x, indicator_y)
@@ -440,7 +442,7 @@ class Interfaz:
             indicator_x = (Interfaz.Ancho_pantalla/2)-300
             indicator_y = 130
             for palabra in palabrasAdivinadas:
-                new_indicator = Letra(palabra.Get_palabraStr(), indicator_x, indicator_y)
+                new_indicator = Letra(palabra, indicator_x, indicator_y)
                 new_indicator.color_fondo = "#6aaa64"
                 new_indicator.dibujar(Interfaz.Pantalla, False)
                 indicator_x += 150
@@ -514,11 +516,11 @@ class Interfaz:
             Reiniciar = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 700), text_input="REINICIAR JUEGO",
                                 font=Interfaz.Get_font(30), base_color="#000240", hovering_color="White")
 
-            logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
-                                font=Interfaz.Get_font(20), base_color="#d7fcd4", hovering_color="White")
+        logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
+                            font=Interfaz.Get_font(20), base_color="#d7fcd4", hovering_color="White")
 
-            for button in [Reiniciar, logo]:
-                button.Update(Interfaz.Pantalla)
+        for button in [Reiniciar, logo]:
+            button.Update(Interfaz.Pantalla)
         pygame.display.update()
 
         while True:
