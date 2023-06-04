@@ -43,7 +43,7 @@ class Juego:
 
         #Chequo si existen las palabras
         elif  [i for i in xfrase if i.lower() not in self.diccionario]:
-            raise PalabraNoExistente("La frase tiene palabras no existentes")
+            raise PalabraNoExistente("La frase tiene palabras inexistentes")
 
         #Chequeo Longitud de frase
         elif len([i for i in xfrase if len(i) > 2]) < 4 or len([i for i in xfrase if len(i) > 2]) > 6:
@@ -120,7 +120,7 @@ class Juego:
         else:
             raise
 
-    def Siguiente_turno(self, flag=True):
+    def Siguiente_turno(self):
         jugadores = [i for i in self.Jugadores if i.Participo == False]
         if self.Asignar_Frase_Objetivo():
             if len(jugadores) > 0:
@@ -128,13 +128,12 @@ class Juego:
                 jugador.Participo = True
                 Interfaz.Jugar_screen(self, None, False, jugador)
             else:
-                for i in self.Jugadores:
-                    i.Participo = False
+                for jugador in self.Jugadores:
+                    jugador.Participo = False
                 jugadores = [i for i in self.Jugadores if i.Participo == False]
                 jugador = random.choice(jugadores)
                 jugador.Participo = True
-                Interfaz.Jugar_screen(self, None, False, jugador)
-                
+                Interfaz.Jugar_screen(self, None, False, jugador)     
         else:
             Interfaz.Resultados_screen(self)
 

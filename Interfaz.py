@@ -366,7 +366,7 @@ class Interfaz:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         if len(current_guess_string) == Longitud_palabra and current_guess_string.lower() in Juego.Get_diccionario():
-                            jugador.Adivinar(current_guess, Juego)
+                            jugador.AdivinarPalabra(current_guess, Juego)
                             guesses_count += 1
                             current_guess = []
                             current_guess_string = ""
@@ -404,6 +404,15 @@ class Interfaz:
                                 pygame.display.update()
                                 time.sleep(3)
                                 Juego.Siguiente_turno()
+                        elif current_guess_string.lower() not in Juego.Get_diccionario() and len(current_guess_string)>0:
+                            error_txt = Interfaz.Get_font(17).render("Palabra inexistente", True, "Red")
+                            rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla/2+20, 500))
+                            error_start_time = pygame.time.get_ticks()
+                        elif len(current_guess_string) < Longitud_palabra and len(current_guess_string):
+                            error_txt = Interfaz.Get_font(17).render("Palabra demasiada corta", True, "Red")
+                            rect_error = error_txt.get_rect(center=(Interfaz.Ancho_pantalla/2+20, 500))
+                            error_start_time = pygame.time.get_ticks()
+
 
                     elif event.key == pygame.K_BACKSPACE:
                         if len(current_guess_string) > 0:
@@ -413,6 +422,19 @@ class Interfaz:
                         if key_pressed in "QWERTYUIOPASDFGHJKLÑZXCVBNM" and key_pressed != "":
                             if len(current_guess_string) < Longitud_palabra:
                                 Interfaz.__Mostrar_letra(key_pressed)
+
+            
+            if error_txt is not None:
+                Interfaz.Pantalla.blit(error_txt, rect_error)
+                time_since_error = pygame.time.get_ticks() - error_start_time
+                if time_since_error >= 2000:
+                    error_txt = None
+                    Interfaz.Añadir_texto("                                              ", 40, (Interfaz.Ancho_pantalla/2+20, 500), "white", "white")
+                    pygame.display.update()
+
+            UI_REFRESH_RATE = Interfaz.Clock.tick(60)/1000
+            Interfaz.Manager.update(UI_REFRESH_RATE)
+            # Interfaz.Manager.draw_ui(Interfaz.Pantalla)
 
             # timer
             current_timer = pygame.time.get_ticks()
@@ -627,7 +649,7 @@ class Interfaz:
             texto = texto.split(".")
             unit = texto[1].split(" ")
             texto = texto[0] + " "+unit[1]
-            blanquear = Interfaz.Get_font(tamaño).render("      ", True, "white", "white")
+            blanquear = Interfaz.Get_font(tamaño).render("         ", True, "white", "white")
             rect_blanq = blanquear.get_rect(center=posicion)
             Interfaz.Pantalla.blit(blanquear, rect_blanq)
         textoAñadir = Interfaz.Get_font(tamaño).render(texto, True, colorLetra, colorFondo)

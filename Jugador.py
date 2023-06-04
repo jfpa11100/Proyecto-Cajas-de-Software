@@ -8,8 +8,11 @@ class Jugador:
     def Registrar(self, Juego):
         Juego.Guardar_Jugador(self)
 
-    def Adivinar(self, intento, Juego):
+    def AdivinarPalabra(self, intento, Juego):
         Juego.Verificar_intento(intento, self)
+    
+    def AdivinarFrase(self, intento, Juego):
+        Juego.Verificar_frase(intento)
 
     def __repr__(self) -> str:
         return repr(f"Jugador {self.Nombre}, num: {self.Numero}")
