@@ -570,21 +570,39 @@ class Interfaz:
             Interfaz.Añadir_texto("INSTRUCCIONES:", 35, (Interfaz.Ancho_pantalla / 2, 100), pygame.Color("#000240"))
             
             Interfaz.Añadir_texto("1. Se deben definir los roles del juego ( admin y jugadores ).",
-                                     12, (Interfaz.Ancho_pantalla / 2, 170), "black")
+                                     12, (Interfaz.Ancho_pantalla / 2, 170+40), "black")
 
             Interfaz.Añadir_texto("2. El admin debe ingresar la estructura base del juego ( frases y tiempo límite ).",
-                                     12, (Interfaz.Ancho_pantalla / 2, 210), "black")
+                                     12, (Interfaz.Ancho_pantalla / 2, 210+40), "black")
 
-            Interfaz.Añadir_texto("Tener en cuenta que las frases deben ser mínimo 4 y máximo 6 palabras. (conectores COMO 'en', 'lo', 'de' no cuentan como palabra pero son permitidas).",
-                                     8, (Interfaz.Ancho_pantalla / 2, 235), "black")
+            Interfaz.Añadir_texto("Tener en cuenta que las frases deben ser mínimo 4 y máximo 6 palabras. ( conectores COMO 'en', 'lo', 'de' no cuentan como palabra pero son permitidas ).",
+                                     8, (Interfaz.Ancho_pantalla / 2, 235+40), "black")
 
             Interfaz.Añadir_texto("3. Los jugadores deben registrarse con nombre y número identificador.",
-                                     12, (Interfaz.Ancho_pantalla / 2, 270), "black")
+                                     12, (Interfaz.Ancho_pantalla / 2, 270+40), "black")
 
-            Interfaz.Añadir_texto("Para que se guarden los datos, debes presionar 'ENTER' al terminar de llenar el campo.",
+            Interfaz.Añadir_texto("4. Al ingresar una palabra debe tener en cuenta que: ",
+                                     12, (Interfaz.Ancho_pantalla / 2, 310+40), "black")
+
+            Interfaz.Añadir_texto("- Si alguna letra se pinta de verde, significa que esa letra está en la palabra objetivo en la posición correcta.",
+                                     8, (Interfaz.Ancho_pantalla / 2+20, 340+40), "black")
+
+            Interfaz.Añadir_texto("- Si alguna letra se pinta de amarillo, significa que esa letra está en la palabra objetivo pero no en esa posición.",
+                                     8, (Interfaz.Ancho_pantalla / 2+20, 370+40), "black")
+
+            Interfaz.Añadir_texto("- Si alguna letra se pinta de gris, significa que esa letra no está en la palabra objetivo.",
+                                     8, (Interfaz.Ancho_pantalla / 2+20, 400+40), "black")
+
+            Interfaz.Añadir_texto("5. Para ganar un punto, debes armar la frase con las palabras previamente adivinadas correctamente.",
+                                     12, (Interfaz.Ancho_pantalla / 2, 435+40), "black")
+
+            Interfaz.Añadir_texto("6. Si no hay mas frases o jugadores, el juego mostrará la tabla de resultados.",
+                                     12, (Interfaz.Ancho_pantalla / 2, 475+40), "black")
+
+            Interfaz.Añadir_texto("Para que se guarden los datos, debes presionar 'ENTER' al terminar de llenar cada campo.",
                                      12, (Interfaz.Ancho_pantalla / 2, 660), "red")
 
-            volver_btn = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 700), text_input="VOLVER",
+            volver_btn = Button(image=None, pos=(Interfaz.Ancho_pantalla / 2, 720), text_input="VOLVER",
                                 font=Interfaz.Get_font(30), base_color="#000240", hovering_color="White")
 
             logo = Button(image=pygame.image.load("Icono.png"), pos=(25, 20), text_input="   ",
