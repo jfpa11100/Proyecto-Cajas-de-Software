@@ -596,8 +596,11 @@ class Interfaz:
             Interfaz.Añadir_texto("5. Para ganar un punto, debes armar la frase con las palabras previamente adivinadas correctamente.",
                                      12, (Interfaz.Ancho_pantalla / 2, 435+40), "black")
 
-            Interfaz.Añadir_texto("6. Si no hay mas frases o jugadores, el juego mostrará la tabla de resultados.",
+            Interfaz.Añadir_texto("6. Una vez una frase es asignada a un jugador, esta no vuelve a estar disponible para ningún otro jugador.",
                                      12, (Interfaz.Ancho_pantalla / 2, 475+40), "black")
+
+            Interfaz.Añadir_texto("7. Si no hay mas frases o jugadores, el juego mostrará la tabla de resultados.",
+                                     12, (Interfaz.Ancho_pantalla / 2, 505+40), "black")
 
             Interfaz.Añadir_texto("Para que se guarden los datos, debes presionar 'ENTER' al terminar de llenar cada campo.",
                                      12, (Interfaz.Ancho_pantalla / 2, 660), "red")
