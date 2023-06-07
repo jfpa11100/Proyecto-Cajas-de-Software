@@ -61,7 +61,7 @@ class Juego:
     def Asignar_Frase_Objetivo(self):
         frases = [i for i in self.Frases if i.Adivinada == False]
         if len(frases) > 0:
-            self.Frase_objetivo = random.choice(self.Frases)
+            self.Frase_objetivo = random.choice(frases)
             self.Frase_objetivo.Adivinada = True
             return True
         else:
@@ -88,15 +88,8 @@ class Juego:
             for i in range (len(intento)):
                 Interfaz.Pintar_letra(intento[i], "#6aaa64")
             self.Palabra_objetivo.Adivinada = True
-            todas = True
-            for i in self.Frase_objetivo.Frase:
-                if i.Adivinada is False:
-                    todas = False
-            if todas != True:
-                time.sleep(3)
-                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), True, jugador)
-            else:
-                Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), True, jugador)
+            time.sleep(2)
+            Interfaz.Jugar_screen(self, self.Palabra_objetivo.Get_palabraStr(), True, jugador)
         else:
             target = copy.deepcopy(self.Palabra_objetivo)
             for l in range(len(self.Palabra_objetivo)):
