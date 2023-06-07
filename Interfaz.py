@@ -434,7 +434,6 @@ class Interfaz:
 
             UI_REFRESH_RATE = Interfaz.Clock.tick(60)/1000
             Interfaz.Manager.update(UI_REFRESH_RATE)
-            # Interfaz.Manager.draw_ui(Interfaz.Pantalla)
 
             # timer
             current_timer = pygame.time.get_ticks()
@@ -649,7 +648,7 @@ class Interfaz:
             texto = texto.split(".")
             unit = texto[1].split(" ")
             texto = texto[0] + " "+unit[1]
-            blanquear = Interfaz.Get_font(tamaño).render("         ", True, "white", "white")
+            blanquear = Interfaz.Get_font(tamaño).render("              ", True, "white", "white")
             rect_blanq = blanquear.get_rect(center=posicion)
             Interfaz.Pantalla.blit(blanquear, rect_blanq)
         textoAñadir = Interfaz.Get_font(tamaño).render(texto, True, colorLetra, colorFondo)
